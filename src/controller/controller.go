@@ -22,7 +22,7 @@ func MakeCookie(name string, value string) *http.Cookie {
 }
 
 func FrontPage(c echo.Context) error {
-	r, err := http.Get("http:mygithub.com")
+	r, err := http.Get("http:github.com")
 	if err != nil {
 		return c.JSON(http.StatusForbidden, nil)
 	}
@@ -80,6 +80,6 @@ func Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	c.Response().Header().Add("location", "http://mygithub.com")
+	c.Response().Header().Add("location", "http://github.com")
 	return c.JSON(http.StatusFound, nil)
 }
