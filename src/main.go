@@ -1,11 +1,11 @@
 package main
 
 import (
-	"A/route"
-	"github.com/gin-gonic/gin"
+	echo "github.com/labstack/echo/v4"
 )
+
 func main() {
-	gin.SetMode(gin.ReleaseMode)
-	router := route.RegisterRoute()
-	router.Run(":8000")
+	e := echo.New()
+	RouterInit(e)
+	e.Logger.Fatal(e.Start(":8000"))
 }
