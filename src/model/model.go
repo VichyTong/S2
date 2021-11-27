@@ -3,6 +3,8 @@ package model
 import (
 	"Server/util"
 	"errors"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -10,43 +12,62 @@ var (
 	ErrorNoUser        = errors.New("no such user")
 	ErrorWrongPassword = errors.New("wrong password")
 	ErrorSession       = errors.New("not logged in")
+	ErrorDatabase      = errors.New("database error")
 )
-var usernameMap map[string]string
-var sessionMap map[string]string
 
-func init() {
-	usernameMap = make(map[string]string)
-	sessionMap = make(map[string]string)
+type info struct {
+	Username string
+	Password string
+	Session  string
+}
+
+var c *mgo.Collection
+
+func Init() {
+	url := "mongodb://localhost:27017"
+	session, err := mgo.Dial(url)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Clone()
+	session.SetMode(mgo.Monotonic, true)
+	c = session.DB("test").C("info")
 }
 
 func UserRegister(username string, password string) error {
-	_, ok := usernameMap[username]
-	if ok {
+	inf := info{}
+	err := c.Find(bson.M{"username": username}).One(&inf)
+	if err == nil {
 		return ErrorExist
 	}
-	usernameMap[username] = password
+	err = c.Insert(&info{username, password, ""})
+	if err != nil {
+		return ErrorDatabase
+	}
 	return nil
 }
 
 func UserCheck(username string, password string) (string, error) {
-	Password, ok := usernameMap[username]
-	if !ok {
+	inf := info{}
+	err := c.Find(bson.M{"username": username}).One(&inf)
+	if err != nil {
 		return "", ErrorNoUser
 	}
-	if Password != password {
+	if password != inf.Password {
 		return "", ErrorWrongPassword
 	}
 	sessionID := util.RandomString(64)
-	sessionMap[username] = sessionID
+	err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"session": sessionID}}})
 	return sessionID, nil
 }
 
 func SessionCheck(username string, sessionID string) error {
-	SessionID, ok := sessionMap[username]
-	if !ok {
+	inf := info{}
+	err := c.Find(bson.M{"username": username}).One(&inf)
+	if err != nil {
 		return ErrorSession
 	}
-	if sessionID != SessionID {
+	if inf.Session != sessionID {
 		return ErrorSession
 	}
 	return nil

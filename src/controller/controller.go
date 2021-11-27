@@ -22,7 +22,7 @@ func MakeCookie(name string, value string) *http.Cookie {
 }
 
 func FrontPage(c echo.Context) error {
-	r, err := http.Get("http:github.com")
+	r, err := http.Get("https://github.com")
 	if err != nil {
 		return c.JSON(http.StatusForbidden, nil)
 	}
