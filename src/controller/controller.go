@@ -31,10 +31,17 @@ func FrontPage(c echo.Context) error {
 }
 
 func Register(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
-
-	err := model.UserRegister(username, password)
+	form := model.Info{
+		Username:               c.FormValue("username"),
+		Password:               c.FormValue("password"),
+		ProfileName:            c.FormValue("profile_name"),
+		ProfileBio:             c.FormValue("profile_bio"),
+		ProfileBlog:            c.FormValue("profile_blog"),
+		ProfileTwitterUsername: c.FormValue("profile_twitter_username"),
+		ProfileCompany:         c.FormValue("profile_company"),
+		ProfileLocation:        c.FormValue("profile_location"),
+	}
+	err := model.UserRegister(form)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
@@ -43,7 +50,7 @@ func Register(c echo.Context) error {
 }
 
 func Session(c echo.Context) error {
-	username := c.FormValue("login")
+	username := c.FormValue("username")
 	password := c.FormValue("password")
 
 	sessionID, err := model.UserCheck(username, password)
@@ -57,7 +64,7 @@ func Session(c echo.Context) error {
 
 	return c.JSON(http.StatusFound, nil)
 }
-func Login(c echo.Context) error {
+func CheckStatus(c echo.Context) error {
 	loggedIn, err := c.Cookie("logged_in")
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorCookieMissing.Error())
@@ -79,7 +86,37 @@ func Login(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
+	return nil
+}
+func Login(c echo.Context) error {
+	err := CheckStatus(c)
+	if err != nil {
+		return err
+	}
 
 	c.Response().Header().Add("location", "http://github.com")
 	return c.JSON(http.StatusFound, nil)
+}
+
+func Update(c echo.Context) error {
+	err := CheckStatus(c)
+	if err != nil {
+		return err
+	}
+
+	form := model.Info{
+		Username:               c.FormValue("username"),
+		Password:               c.FormValue("password"),
+		ProfileName:            c.FormValue("profile_name"),
+		ProfileBio:             c.FormValue("profile_bio"),
+		ProfileBlog:            c.FormValue("profile_blog"),
+		ProfileTwitterUsername: c.FormValue("profile_twitter_username"),
+		ProfileCompany:         c.FormValue("profile_company"),
+		ProfileLocation:        c.FormValue("profile_location"),
+	}
+	err = model.UserUpdate(form)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	return c.JSON(http.StatusOK, "")
 }

@@ -15,10 +15,16 @@ var (
 	ErrorDatabase      = errors.New("database error")
 )
 
-type info struct {
-	Username string
-	Password string
-	Session  string
+type Info struct {
+	Username               string
+	Password               string
+	Session                string
+	ProfileName            string
+	ProfileBio             string
+	ProfileBlog            string
+	ProfileTwitterUsername string
+	ProfileCompany         string
+	ProfileLocation        string
 }
 
 var c *mgo.Collection
@@ -34,13 +40,13 @@ func Init() {
 	c = session.DB("test").C("info")
 }
 
-func UserRegister(username string, password string) error {
-	inf := info{}
-	err := c.Find(bson.M{"username": username}).One(&inf)
+func UserRegister(form Info) error {
+	inf := Info{}
+	err := c.Find(bson.M{"username": form.Username}).One(&inf)
 	if err == nil {
 		return ErrorExist
 	}
-	err = c.Insert(&info{username, password, ""})
+	err = c.Insert(&form)
 	if err != nil {
 		return ErrorDatabase
 	}
@@ -48,7 +54,7 @@ func UserRegister(username string, password string) error {
 }
 
 func UserCheck(username string, password string) (string, error) {
-	inf := info{}
+	inf := Info{}
 	err := c.Find(bson.M{"username": username}).One(&inf)
 	if err != nil {
 		return "", ErrorNoUser
@@ -58,17 +64,72 @@ func UserCheck(username string, password string) (string, error) {
 	}
 	sessionID := util.RandomString(64)
 	err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"session": sessionID}}})
+	if err != nil {
+		return "", ErrorDatabase
+	}
 	return sessionID, nil
 }
 
 func SessionCheck(username string, sessionID string) error {
-	inf := info{}
+	inf := Info{}
 	err := c.Find(bson.M{"username": username}).One(&inf)
 	if err != nil {
 		return ErrorSession
 	}
 	if inf.Session != sessionID {
 		return ErrorSession
+	}
+	return nil
+}
+
+func UserUpdate(form Info) error {
+	username := form.Username
+	inf := Info{}
+	err := c.Find(bson.M{"username": username}).One(&inf)
+	if err != nil {
+		return ErrorNoUser
+	}
+	if form.Password != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"password": form.Password}}})
+		if err != nil {
+			return ErrorDatabase
+		}
+	}
+	if form.ProfileName != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_name": form.ProfileName}}})
+		if err != nil {
+			return ErrorDatabase
+		}
+	}
+	if form.ProfileBio != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_bio": form.ProfileBio}}})
+		if err != nil {
+			return ErrorDatabase
+		}
+	}
+	if form.ProfileBlog != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_blog": form.ProfileBlog}}})
+		if err != nil {
+			return ErrorDatabase
+		}
+	}
+	if form.ProfileTwitterUsername != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_twitter_username": form.ProfileTwitterUsername}}})
+		if err != nil {
+			return ErrorDatabase
+		}
+	}
+	if form.ProfileCompany != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_company": form.ProfileCompany}}})
+		if err != nil {
+			return ErrorDatabase
+		}
+	}
+	if form.ProfileLocation != "" {
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_location": form.ProfileLocation}}})
+		if err != nil {
+			return ErrorDatabase
+		}
 	}
 	return nil
 }
