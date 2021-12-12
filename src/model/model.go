@@ -96,37 +96,37 @@ func UserUpdate(form Info) error {
 		}
 	}
 	if form.ProfileName != "" {
-		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_name": form.ProfileName}}})
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profilename": form.ProfileName}}})
 		if err != nil {
 			return ErrorDatabase
 		}
 	}
 	if form.ProfileBio != "" {
-		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_bio": form.ProfileBio}}})
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profilebio": form.ProfileBio}}})
 		if err != nil {
 			return ErrorDatabase
 		}
 	}
 	if form.ProfileBlog != "" {
-		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_blog": form.ProfileBlog}}})
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profileblog": form.ProfileBlog}}})
 		if err != nil {
 			return ErrorDatabase
 		}
 	}
 	if form.ProfileTwitterUsername != "" {
-		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_twitter_username": form.ProfileTwitterUsername}}})
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profiletwitterusername": form.ProfileTwitterUsername}}})
 		if err != nil {
 			return ErrorDatabase
 		}
 	}
 	if form.ProfileCompany != "" {
-		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_company": form.ProfileCompany}}})
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profilecompany": form.ProfileCompany}}})
 		if err != nil {
 			return ErrorDatabase
 		}
 	}
 	if form.ProfileLocation != "" {
-		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profile_location": form.ProfileLocation}}})
+		err = c.Update(bson.M{"username": username}, bson.D{{"$set", bson.M{"profilelocation": form.ProfileLocation}}})
 		if err != nil {
 			return ErrorDatabase
 		}
