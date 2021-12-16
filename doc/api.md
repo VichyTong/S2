@@ -16,7 +16,7 @@
 
 如果遇到错误，则 `success` 值一定为 `false`，且 `hint` 字段中包含错误的具体内容。
 
-### POST /user/register
+### POST /usr/register
 
 新用户注册，全部字段都不可为空。
 
@@ -35,15 +35,9 @@
 }
 ```
 
-响应：
+响应：无
 
-```json
-{
-    "_id": "用户 ID"
-}
-```
-
-### POST /user/update
+### POST /usr/update
 
 修改用户个人信息。可以修改的字段有：密码、昵称、简介、博客、推特、公司、地址，请求体中包含哪些字段就修改哪些。
 
@@ -64,7 +58,7 @@
 
 响应：无
 
-### POST /use/session
+### POST /usr/session
 
 登录请求，并创建一个session。
 
@@ -72,7 +66,13 @@
 
 ```json
 {
-    "username": "用户名",
-    "password": "密码"
+  "username": "用户名",
+  "password": "密码"
 }
 ```
+
+响应：无，成功时http_status应该为302
+
+### GET /usr/login
+
+从/usr/session跳转过来，校验cookies，检查登陆状态。
