@@ -76,3 +76,54 @@
 ### GET /usr/login
 
 从/usr/session跳转过来，校验cookies，检查登陆状态。
+
+### POST /username/repositoryName/issues
+
+创建新的issue。
+
+```json
+{
+  "issue_title": "标题",
+  "issue_body": "正文"
+}
+```
+
+响应：无，成功时http_status应该为302
+
+### GET /issues
+
+获取issue列表。
+
+### GET /username/repositoryName/issues/issueNumber
+
+获取issue详细情况。
+
+### POST /username/repositoryName/issues/issueNumber
+
+修改issue的正文。
+
+请求：
+
+```json
+{
+  "issue_id": "id",
+  "issue_body": "正文"
+}
+```
+
+响应：无
+
+### POST /username/repositoryName/issue_comments
+
+在issue后添加评论。
+
+请求：
+
+```json
+{
+  "comment_and_close": "是否选择关闭issue",
+  "comment_and_open": "是否选择开启issue",
+  "issue": "编号",
+  "comment_body": "正文"
+}
+```

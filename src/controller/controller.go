@@ -120,3 +120,24 @@ func Update(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, "")
 }
+
+func Issue(c echo.Context) error {
+	err := CheckStatus(c)
+	if err != nil {
+		return err
+	}
+	username, err := c.Cookie("dotcom_user")
+	list, err := model.IssueList(username.Value)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, list)
+}
+
+func IssueAdd(c echo.Context) error {
+	err := CheckStatus(c)
+	if err != nil {
+		return err
+	}
+
+}

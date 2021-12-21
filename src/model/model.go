@@ -25,6 +25,7 @@ type Info struct {
 	ProfileTwitterUsername string
 	ProfileCompany         string
 	ProfileLocation        string
+	Type                   string
 }
 
 var c *mgo.Collection
@@ -46,6 +47,7 @@ func UserRegister(form Info) error {
 	if err == nil {
 		return ErrorExist
 	}
+	form.Type = "profile"
 	err = c.Insert(&form)
 	if err != nil {
 		return ErrorDatabase
@@ -132,4 +134,17 @@ func UserUpdate(form Info) error {
 		}
 	}
 	return nil
+}
+
+type issue struct {
+	Id          string
+	Body        string
+	Open        bool
+	CommentList map[int]string
+	Url         string
+	Type        string
+}
+
+func IssueList(username string) (map[int]issue, error) {
+
 }
